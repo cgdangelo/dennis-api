@@ -36,13 +36,15 @@ class Dennis < Sinatra::Base
 
   delete '/api/projects/:oid' do
     $projects.remove '_id' => bson_object_id(params[:oid])
-    $projects.find.to_a.to_json
+    true
   end
 
   put '/api/projects/:oid' do
     request.body.rewind
     request_json = JSON.parse request.body.read
+    request_json.delete '_id'
 
     $projects.update({'_id' => bson_object_id(params[:oid])}, request_json)
+    true
   end
 end
