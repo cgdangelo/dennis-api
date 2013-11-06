@@ -1,5 +1,5 @@
 require 'bundler'
 Bundler.require :default
+Dir.glob('./{controllers,helpers}/*.rb').each { |file| require file }
 
-require './dennis'
-run Dennis
+map('/api/projects') { run ProjectsController }
