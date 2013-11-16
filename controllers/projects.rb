@@ -1,39 +1,31 @@
-class ProjectsController < Sinatra::Base
-  include Mongo
-
-  configure do
-    $mongo_client = MongoClient.new
-    $dennis       = $mongo_client.db 'dennis'
-    $projects     = $dennis['projects']
-  end
+class ProjectsController < ApplicationController
+  helpers ProjectsHelpers
 
   get '/' do
-    $projects.find.to_a.to_json
+    Project.all.to_json
   end
 
-  get '/:oid' do
-    document_by_id(params[:oid]).to_json
+  get '/:id' do
+    Project.find(params[:id]).to_json
   end
 
   post '/' do
-    request.body.rewind
-    request_json = JSON.parse request.body.read
+    json = parse_json_data
+    new_project = Project.new json
 
-    project_id = $projects.insert({ :name => request_json['name'], :synopsis => request_json['synopsis'], :repo => request_json['repo'] })
-    project_id.to_json
+    if new_project.save
+      new_project.to_json
+    else
+      false
+    end
   end
 
-  delete '/:oid' do
-    $projects.remove '_id' => bson_object_id(params[:oid])
-    true
+  delete '/:id' do
+    Project.find(params[:id]).delete
   end
 
-  put '/:oid' do
-    request.body.rewind
-    request_json = JSON.parse request.body.read
-    request_json.delete '_id'
-
-    $projects.update({'_id' => bson_object_id(params[:oid])}, request_json)
-    true
+  put '/:id' do
+    json = parse_json_data
+    Project.update(params[:id], json).to_json
   end
 end
