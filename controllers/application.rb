@@ -8,9 +8,4 @@ class ApplicationController < Sinatra::Base
   after do
     close_connection
   end
-
-  def parse_json_data
-    request.body.rewind
-    JSON.parse request.body.read
-  end
 end

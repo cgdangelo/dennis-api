@@ -7,4 +7,9 @@ module ApplicationHelpers
   def close_connection
     MongoMapper.connection.close
   end
+
+  def parse_json_data
+    request.body.rewind
+    JSON.parse request.body.read
+  end
 end
