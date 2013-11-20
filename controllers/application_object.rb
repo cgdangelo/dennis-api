@@ -1,4 +1,6 @@
 class ApplicationObjectController < ApplicationController
+  class << self; def prefix(name); @@prefix = name.to_s.camelize; end; end
+
   get '/' do
     Object::const_get(@@prefix).all.to_json
   end
